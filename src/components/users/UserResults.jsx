@@ -2,10 +2,11 @@ import React from "react";
 import Spinner from "../layout/Spinner";
 import UserItem from "./UserItem";
 import { useEffect, useContext } from "react";
-import GithubContext from "../../context/GithubContext";
+import GithubContext from "../../context/githubContext";
 
 const UserResults = () => {
-  const { loading, users, fetchUsers } = useContext(GithubContext);
+  const { loading, users, fetchUsers } = useContext(GithubContext); //this would noramlly be local state
+  //but by using context its global
   useEffect(() => {
     fetchUsers();
   }, []);

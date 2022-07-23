@@ -1,5 +1,6 @@
 //explained in https://www.udemy.com/course/react-front-to-back-2022/learn/lecture/29768922
-import { createContext, useState } from "react";
+import { createContext, useReducer } from "react";
+import githubReducer from "./githubReducer";
 
 const GithubContext = createContext();
 
@@ -7,18 +8,22 @@ const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
 const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 
 export const GithubProvider = ({ children }) => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const initialState = { users: [], loading: true };
+  const [state, dispatch] = useReducer(githubReducer, initialState);
   const fetchUsers = async () => {
     const response = await fetch(`${GITHUB_URL}users`, {
       headers: { Authorization: `token ${GITHUB_TOKEN}` },
     });
     const data = await response.json();
-    setLoading(false);
-    setUsers(data);
+
+    dispatch({ type: "GET_USERS", payload: data });
   };
+  // the context provider will wrap everything in app
+  // fetch users will be called when the desired component loads by using useeffect
   return (
-    <GithubContext.Provider value={{ users, loading, fetchUsers }}>
+    <GithubContext.Provider
+      value={{ users: state.users, loading: state.loading, fetchUsers }}
+    >
       {children}
     </GithubContext.Provider>
   );
