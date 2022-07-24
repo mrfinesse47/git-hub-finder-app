@@ -8,29 +8,35 @@ const GITHUB_URL = process.env.REACT_APP_GITHUB_URL;
 const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 
 export const GithubProvider = ({ children }) => {
+  //reducer needs an initial state
   const initialState = { users: [], loading: false };
-  const [state, dispatch] = useReducer(githubReducer, initialState);
+  //nice futher destructuring would normally be [state,dispatch]
+  const [{ users, loading }, dispatch] = useReducer(
+    githubReducer,
+    initialState
+  );
 
-  //get initial users only testing purposes
-  const fetchUsers = async () => {
+  //get users after search
+  const getUsers = async (text) => {
+    const params = new URLSearchParams({ q: text });
     setLoading();
-    const response = await fetch(`${GITHUB_URL}users`, {
+    const response = await fetch(`${GITHUB_URL}search/users?${params}`, {
       headers: { Authorization: `token ${GITHUB_TOKEN}` },
     });
     const data = await response.json();
 
-    dispatch({ type: "GET_USERS", payload: data });
+    //I guess the magic is that the payload can be different based on the type
+    dispatch({ type: "SET_USERS", payload: data });
   };
   const setLoading = () => {
     dispatch({ type: "SET_LOADING" });
+    //you can dispatch with no payload as well
   };
   // the context provider will wrap everything in app
-  // fetch users will be called when the desired component loads by using useeffect
+  // user search calls usecontext
 
   return (
-    <GithubContext.Provider
-      value={{ users: state.users, loading: state.loading, fetchUsers }}
-    >
+    <GithubContext.Provider value={{ users, loading, getUsers }}>
       {children}
     </GithubContext.Provider>
   );
