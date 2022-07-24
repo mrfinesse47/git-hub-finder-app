@@ -16,6 +16,10 @@ export const GithubProvider = ({ children }) => {
     initialState
   );
 
+  const clearUsers = () => {
+    dispatch({ type: "SET_USERS", payload: [] });
+  };
+
   //get users after search
   const getUsers = async (text) => {
     const params = new URLSearchParams({ q: text });
@@ -23,10 +27,10 @@ export const GithubProvider = ({ children }) => {
     const response = await fetch(`${GITHUB_URL}search/users?${params}`, {
       headers: { Authorization: `token ${GITHUB_TOKEN}` },
     });
-    const data = await response.json();
+    const { items } = await response.json();
 
     //I guess the magic is that the payload can be different based on the type
-    dispatch({ type: "SET_USERS", payload: data });
+    dispatch({ type: "SET_USERS", payload: items });
   };
   const setLoading = () => {
     dispatch({ type: "SET_LOADING" });
@@ -36,10 +40,10 @@ export const GithubProvider = ({ children }) => {
   // user search calls usecontext
 
   return (
-    <GithubContext.Provider value={{ users, loading, getUsers }}>
+    <GithubContext.Provider value={{ users, loading, getUsers, clearUsers }}>
       {children}
     </GithubContext.Provider>
-  );
+  ); //cildren is the entire app
 };
 
 export default GithubContext;
