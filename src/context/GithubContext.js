@@ -9,9 +9,9 @@ const GITHUB_TOKEN = process.env.REACT_APP_GITHUB_TOKEN;
 
 export const GithubProvider = ({ children }) => {
   //reducer needs an initial state
-  const initialState = { users: [], loading: false };
+  const initialState = { users: [], user: {}, loading: false };
   //nice futher destructuring would normally be [state,dispatch]
-  const [{ users, loading }, dispatch] = useReducer(
+  const [{ users, user, loading }, dispatch] = useReducer(
     githubReducer,
     initialState
   );
@@ -39,8 +39,21 @@ export const GithubProvider = ({ children }) => {
   // the context provider will wrap everything in app
   // user search calls usecontext
 
+  //get a single user
+  const getUser = async (login) => {
+    setLoading();
+    const response = await fetch(`${GITHUB_URL}users/${login}`, {
+      headers: { Authorization: `token ${GITHUB_TOKEN}` },
+    });
+    const item = await response.json();
+
+    dispatch({ type: "SET_USER", payload: item });
+  };
+
   return (
-    <GithubContext.Provider value={{ users, loading, getUsers, clearUsers }}>
+    <GithubContext.Provider
+      value={{ users, user, loading, getUsers, clearUsers, getUser }}
+    >
       {children}
     </GithubContext.Provider>
   ); //cildren is the entire app
