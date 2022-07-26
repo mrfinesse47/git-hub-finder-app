@@ -32,9 +32,6 @@ const getUserRepos = async (login) => {
   });
   const repos = await response.json();
   return repos;
-
-  //in the course he called the type: GET_REPOS
-  //   dispatch({ type: "SET_REPOS", payload: data });
 };
 
 // export const getUserAndRepos = async (login) => {

@@ -37,7 +37,6 @@ const User = () => {
   } = user;
 
   if (loading) {
-    console.log("here");
     return <Spinner />;
   }
   return (
