@@ -5,16 +5,19 @@ import { useParams } from "react-router-dom";
 import Spinner from "../components/layout/Spinner";
 import GithubContext from "../context/githubContext";
 import RepoList from "../components/repos/RepoList";
+import { getUserAndRepos } from "../context/githubActions";
 
 const User = () => {
   const { login } = useParams();
 
-  const { loading, user, getUser, getUserRepos, repos } =
-    useContext(GithubContext);
+  const { loading, user, repos, dispatch } = useContext(GithubContext);
 
   useEffect(() => {
-    getUser(login);
-    getUserRepos(login);
+    dispatch({ type: "SET_LOADING" });
+    getUserAndRepos(login).then(({ user, repos }) => {
+      dispatch({ type: "SET_USER", payload: user });
+      dispatch({ type: "SET_REPOS", payload: repos });
+    });
   }, []);
 
   const {
@@ -34,6 +37,7 @@ const User = () => {
   } = user;
 
   if (loading) {
+    console.log("here");
     return <Spinner />;
   }
   return (

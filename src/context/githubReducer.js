@@ -1,6 +1,7 @@
 const githubReducer = (state, action) => {
   switch (action.type) {
     case "SET_LOADING":
+      console.log("setting loading");
       return { ...state, loading: true };
     case "SET_USERS":
       return { ...state, users: action.payload, loading: false };
