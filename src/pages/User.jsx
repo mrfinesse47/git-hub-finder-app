@@ -15,8 +15,7 @@ const User = () => {
   useEffect(() => {
     dispatch({ type: "SET_LOADING" });
     getUserAndRepos(login).then(({ user, repos }) => {
-      dispatch({ type: "SET_USER", payload: user });
-      dispatch({ type: "SET_REPOS", payload: repos });
+      dispatch({ type: "SET_USER_AND_REPOS", payload: { user, repos } });
     });
   }, []);
 
